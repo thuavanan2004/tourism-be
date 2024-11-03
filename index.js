@@ -27,13 +27,7 @@ app.use(cors({
 app.use(bodyParser.json());
 app.use(cookieParser());
 
-cron.schedule("0 20 * * *", () => {
-  console.log("Bắt đầu cào dữ liệu...");
 
-  srapeData.srape()
-    .then(() => console.log("Cào dữ liệu hoàn tất"))
-    .catch(error => console.log("Lỗi khi cào dữ liệu:", error));
-});
 
 clientRoutes(app);
 
