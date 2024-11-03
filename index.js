@@ -9,6 +9,7 @@ const swaggerDocs = require("./swagger");
 const swaggerUi = require("swagger-ui-express");
 const srapeData = require("./scrape-data/index");
 const cron = require('node-cron');
+const cors = require('cors');
 
 mysql: //root:nwSxozPCwWXzZHnltrpZbretJXVpcGqz@junction.proxy.rlwy.net:27845/railway
 
@@ -16,6 +17,12 @@ mysql: //root:nwSxozPCwWXzZHnltrpZbretJXVpcGqz@junction.proxy.rlwy.net:27845/rai
 
 const app = express();
 const port = process.env.PORT;
+
+app.use(cors({
+  origin: 'http://localhost:3000',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  credentials: true
+}));
 
 app.use(bodyParser.json());
 app.use(cookieParser());

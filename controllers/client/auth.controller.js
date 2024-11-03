@@ -84,7 +84,8 @@ module.exports.register = async (req, res) => {
       message: "Định dạng mật khẩu không hợp lệ!"
     });
   }
-  if (!userValidate.validatePhoneNumber(phoneNumber)) {
+
+  if (phoneNumber && !userValidate.validatePhoneNumber(phoneNumber)) {
     return res.status(400).json({
       message: "Định dạng số điện thoại không hợp lệ!"
     });

@@ -28,7 +28,8 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING(255)
   },
   deleted: {
-    type: DataTypes.BOOLEAN
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
   },
   createdAt: {
     type: DataTypes.DATE,
