@@ -10,6 +10,10 @@ const authMiddleware = require("../../middlewares/client/auth.middlware");
 module.exports = (app) => {
   const version = '/api';
 
+  app.get("/", (req, res) => {
+    res.send("Hello api from Thừa Văn An")
+  })
+
   app.use(version + '/tours', tourRoutes);
 
   app.use(version + '/auth', authRoutes);
