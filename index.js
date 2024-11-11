@@ -15,7 +15,6 @@ const cron = require('node-cron');
 const cors = require('cors');
 
 mysql: //root:nwSxozPCwWXzZHnltrpZbretJXVpcGqz@junction.proxy.rlwy.net:27845/railway
-
   sequelize;
 
 const app = express();
