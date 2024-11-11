@@ -1117,7 +1117,7 @@ module.exports.getAllTour = async (req, res) => {
     const query = `
     SELECT 
       tours.title, 
-      IFNULL(images.source, 'default_image.jpg') AS source, 
+      IFNULL(MAX(images.source), 'default_image.jpg') AS source,
       tours.code, 
       tours.status, 
       tours.isFeatured, 
