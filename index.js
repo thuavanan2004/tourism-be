@@ -20,11 +20,11 @@ mysql: //root:nwSxozPCwWXzZHnltrpZbretJXVpcGqz@junction.proxy.rlwy.net:27845/rai
 const app = express();
 const port = process.env.PORT;
 
-// app.use(cors({
-//   origin: 'http://127.0.0.1:5500',
-//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-//   credentials: true
-// }));
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  credentials: true
+}));
 
 app.use(bodyParser.json());
 app.use(cookieParser());
