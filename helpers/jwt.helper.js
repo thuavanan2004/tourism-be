@@ -43,3 +43,25 @@ module.exports.generateRefreshToken = (userId) => {
     throw error;
   }
 };
+
+module.exports.generateToken = (adminId) => {
+  try {
+    const secret = process.env.ACCESS_TOKEN_SECRET;
+    if (!secret) {
+      throw new Error(
+        "ACCESS_TOKEN_SECRET is not defined in the environment variables."
+      );
+    }
+
+    const token = jwt.sign({
+      adminId
+    }, secret, {
+      expiresIn: '1h'
+    })
+
+    return token;
+  } catch (error) {
+    console.error("Error generating token:", error);
+    throw error;
+  }
+};

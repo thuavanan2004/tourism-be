@@ -3,41 +3,38 @@ const {
 } = require('sequelize');
 const sequelize = require('../config/database');
 
-const Transportation = sequelize.define('Transportation', {
+
+const Role = sequelize.define('Role', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     allowNull: false,
     autoIncrement: true,
   },
-  title: {
+  name: {
     type: DataTypes.STRING(255),
-    unique: true
+    allowNull: false
   },
-  information: {
-    type: DataTypes.TEXT,
-  },
-  status: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: true,
+  description: {
+    type: DataTypes.STRING(255),
   },
   deleted: {
     type: DataTypes.BOOLEAN,
-    defaultValue: false,
+    defaultValue: false
   },
-  createdBy: {
+  deletedBy: {
     type: DataTypes.INTEGER,
   },
   updatedBy: {
     type: DataTypes.INTEGER,
   },
-  deletedBy: {
+  createdBy: {
     type: DataTypes.INTEGER,
   }
 }, {
-  tableName: 'transportation',
+  tableName: 'role',
   timestamps: true
 });
 
 
-module.exports = Transportation;
+module.exports = Role;

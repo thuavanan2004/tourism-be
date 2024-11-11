@@ -24,6 +24,9 @@ const Image = sequelize.define('Image', {
     type: DataTypes.STRING(255),
     allowNull: false,
   },
+  isMain: {
+    type: DataTypes.BOOLEAN
+  },
   createdAt: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,

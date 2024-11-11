@@ -12,9 +12,11 @@ module.exports.transformeData = (tours) => {
       transformedData.push({
         title: item.title,
         code: item.code,
-        slug: item.slug,
-        price: item.price,
-        image: item.image,
+        status: item.status,
+        isFeatured: item.isFeatured,
+        price: item.adultPrice,
+        image: item.source,
+        departure: item.departure,
         destination: item.destination,
         transportation: item.transportation,
         days: [{

@@ -12,7 +12,10 @@ module.exports.generateOrderCode = () => {
   return 'ORDER-' + generateRandomCode(8);
 }
 
-// Hàm tạo mã code cho Transaction
 module.exports.generateTransactionCode = () => {
   return 'TRANS-' + generateRandomCode(8);
+}
+
+module.exports.generateTourCode = () => {
+  return 'TOUR-' + generateRandomCode(8);
 }

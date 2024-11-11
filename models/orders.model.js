@@ -55,6 +55,10 @@ const Order = sequelize.define('Order', {
     type: DataTypes.STRING,
     allowNull: false,
     defaultValue: 'Pending'
+  },
+  deleted: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
   }
 }, {
   tableName: 'orders',

@@ -16,14 +16,8 @@ const Tour = sequelize.define("Tour", {
     allowNull: false
   },
   code: {
-    type: DataTypes.STRING(10),
+    type: DataTypes.STRING(15),
     unique: true
-  },
-  image: {
-    type: DataTypes.STRING(255)
-  },
-  price: {
-    type: DataTypes.INTEGER
   },
   status: {
     type: DataTypes.BOOLEAN,
@@ -71,11 +65,14 @@ const Tour = sequelize.define("Tour", {
   updatedAt: {
     type: DataTypes.DATE,
   },
+  createdBy: {
+    type: DataTypes.INTEGER
+  },
   deletedBy: {
-    type: DataTypes.STRING(255)
+    type: DataTypes.INTEGER
   },
   updatedBy: {
-    type: DataTypes.STRING(255)
+    type: DataTypes.INTEGER
   }
 }, {
   tableName: "tours",

@@ -3,27 +3,27 @@ const {
 } = require('sequelize');
 const sequelize = require('../config/database');
 
-const Destination = sequelize.define('Destination', {
+const Admin = sequelize.define('Admin', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     allowNull: false,
     autoIncrement: true,
   },
-  title: {
+  fullName: {
     type: DataTypes.STRING(255),
-    unique: true,
-    allowNull: false,
+    allowNull: false
   },
-  image: {
-    type: DataTypes.STRING(255)
-  },
-  slug: {
+  email: {
     type: DataTypes.STRING(255),
-    allowNull: false,
+    allowNull: false
   },
-  information: {
-    type: DataTypes.TEXT,
+  avatar: {
+    type: DataTypes.STRING(255),
+  },
+  password: {
+    type: DataTypes.STRING(255),
+    allowNull: false
   },
   status: {
     type: DataTypes.BOOLEAN,
@@ -33,22 +33,29 @@ const Destination = sequelize.define('Destination', {
     type: DataTypes.BOOLEAN,
     defaultValue: false
   },
-  createdBy: {
-    type: DataTypes.INTEGER,
+  token: {
+    type: DataTypes.STRING(255),
   },
-  updatedBy: {
-    type: DataTypes.INTEGER,
+  createdBy: {
+    type: DataTypes.INTEGER
   },
   deletedBy: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.INTEGER
   },
-  parentId: {
+  updatedBy: {
+    type: DataTypes.INTEGER
+  },
+  roleId: {
     type: DataTypes.INTEGER,
+    references: {
+      model: "Role",
+      key: 'id'
+    }
   }
 }, {
-  tableName: 'destination',
+  tableName: 'admins',
   timestamps: true
 });
 
 
-module.exports = Destination;
+module.exports = Admin;

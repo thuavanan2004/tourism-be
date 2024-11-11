@@ -1,14 +1,14 @@
-const tourRoutes = require("./tour.route");
-const authRoutes = require("./auth.route");
-const userRoutes = require("./user.route");
-const destinationRoutes = require("./destination.route");
-const orderRoutes = require("./order.route");
+const tourRoutes = require("./tour.routes");
+const authRoutes = require("./auth.routes");
+const userRoutes = require("./user.routes");
+const destinationRoutes = require("./destination.routes");
+const orderRoutes = require("./order.routes");
 
 const authMiddleware = require("../../middlewares/client/auth.middlware");
 
 
 module.exports = (app) => {
-  const version = '/api';
+  const version = '/api/client';
 
   app.get("/", (req, res) => {
     res.send("Hello api from Thừa Văn An")

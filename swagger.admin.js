@@ -4,7 +4,7 @@ const swaggerJsDoc = require("swagger-jsdoc");
 const swaggerDefinition = {
   openapi: "3.0.3",
   info: {
-    title: "API Tour Du Lịch",
+    title: "API ADMIN Tour Du Lịch",
     version: "1.0.11",
     description: "Đây là tất cả các endpoint của tour du lịch",
     contact: {
@@ -16,15 +16,27 @@ const swaggerDefinition = {
     },
   },
   servers: [{
-    url: "https://tourism-be-1ipl.onrender.com/api",
+    url: "https://tourism-be-1ipl.onrender.com/api/admin",
     description: "Local server",
+  }],
+  components: {
+    securitySchemes: {
+      BearerAuth: {
+        type: "http",
+        scheme: "bearer",
+        bearerFormat: "JWT",
+      },
+    },
+  },
+  security: [{
+    BearerAuth: [],
   }, ],
 };
 
 // Tùy chọn cho swagger-jsdoc
 const options = {
   swaggerDefinition,
-  apis: ["./controllers/**/*.js"],
+  apis: ["./controllers/admin/*.js"],
 };
 
 const swaggerDocs = swaggerJsDoc(options);

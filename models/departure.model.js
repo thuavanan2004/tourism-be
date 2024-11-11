@@ -14,15 +14,29 @@ const Departure = sequelize.define('Departure', {
     type: DataTypes.STRING(255),
     unique: true
   },
-  slug: {
-    type: DataTypes.STRING(255),
-  },
   information: {
     type: DataTypes.TEXT,
+  },
+  status: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: true,
+  },
+  deleted: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
+  createdBy: {
+    type: DataTypes.INTEGER,
+  },
+  updatedBy: {
+    type: DataTypes.INTEGER,
+  },
+  deletedBy: {
+    type: DataTypes.INTEGER,
   }
 }, {
   tableName: 'departure',
-  timestamps: false
+  timestamps: true
 });
 
 

@@ -17,6 +17,10 @@ const TourDetail = sequelize.define('TourDetail', {
       key: 'id'
     }
   },
+  adultPrice: {
+    type: DataTypes.INTEGER,
+    allowNull: false
+  },
   childrenPrice: {
     type: DataTypes.INTEGER,
     allowNull: true

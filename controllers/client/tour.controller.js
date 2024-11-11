@@ -3,7 +3,6 @@ const sequelize = require("../../config/database");
 const {
   QueryTypes
 } = require("sequelize");
-const convertToDate = require("../../helpers/convertToDate");
 const Schedule = require("../../models/schedule.model");
 const Image = require("../../models/image.model");
 const TourDetail = require("../../models/tour-detail.model");

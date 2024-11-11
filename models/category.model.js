@@ -30,14 +30,15 @@ const Category = sequelize.define('Category', {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
   },
-  createdAt: {
-    type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW,
+  createdBy: {
+    type: DataTypes.INTEGER,
   },
-  updatedAt: {
-    type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW,
+  updatedBy: {
+    type: DataTypes.INTEGER,
   },
+  deletedBy: {
+    type: DataTypes.INTEGER,
+  }
 }, {
   timestamps: true,
   tableName: 'categories',
