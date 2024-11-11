@@ -1082,23 +1082,23 @@ module.exports.getAllTour = async (req, res) => {
     }
 
     var isFeaturedQuery = '';
-    if (isFeaturedQuery) {
+    if (isFeatured) {
       isFeaturedQuery = `AND tours.isFeatured=${isFeatured}`
     }
 
     var destinationQuery = '';
     if (destinationTo) {
-      destinationQuery = `AND departureId=${destinationTo}`
+      destinationQuery = `AND tours.departureId=${destinationTo}`
     }
 
     var departureQuery = '';
     if (departureFrom) {
-      departureQuery = `AND destinationId=${departureFrom}`
+      departureQuery = `AND tours.destinationId=${departureFrom}`
     }
 
     var transportationQuery = '';
     if (transTypeId) {
-      transportationQuery = `AND transportationId=${transTypeId}`
+      transportationQuery = `AND tours.transportationId=${transTypeId}`
     }
 
     var categoryQuery = '';
@@ -1150,7 +1150,7 @@ module.exports.getAllTour = async (req, res) => {
       ${transportationQuery} 
       ${destinationQuery}
       ${dayQuery}
-    GROUP BY tours.id
+    GROUP BY tours.id, destination.title, departure.title, transportation.title
       ${sortQuery}
     `;
 
@@ -1315,17 +1315,17 @@ module.exports.getExpiredTours = async (req, res) => {
 
     var destinationQuery = '';
     if (destinationTo) {
-      destinationQuery = `AND departureId=${destinationTo}`
+      destinationQuery = `AND tours.departureId=${destinationTo}`
     }
 
     var departureQuery = '';
     if (departureFrom) {
-      departureQuery = `AND destinationId=${departureFrom}`
+      departureQuery = `AND tours.destinationId=${departureFrom}`
     }
 
     var transportationQuery = '';
     if (transTypeId) {
-      transportationQuery = `AND transportationId=${transTypeId}`
+      transportationQuery = `AND tours.transportationId=${transTypeId}`
     }
 
     var categoryQuery = '';
@@ -1373,8 +1373,7 @@ module.exports.getExpiredTours = async (req, res) => {
       ${transportationQuery} 
       ${destinationQuery}
       ${dayQuery}
-      ${sortQuery}
-    GROUP BY tours.id
+    GROUP BY tours.id, destination.title, departure.title, transportation.title
     HAVING countTourDetail = 0;
     `;
 
@@ -1542,17 +1541,17 @@ module.exports.getExpiredSoonTours = async (req, res) => {
 
     var destinationQuery = '';
     if (destinationTo) {
-      destinationQuery = `AND departureId=${destinationTo}`
+      destinationQuery = `AND tours.departureId=${destinationTo}`
     }
 
     var departureQuery = '';
     if (departureFrom) {
-      departureQuery = `AND destinationId=${departureFrom}`
+      departureQuery = `AND tours.destinationId=${departureFrom}`
     }
 
     var transportationQuery = '';
     if (transTypeId) {
-      transportationQuery = `AND transportationId=${transTypeId}`
+      transportationQuery = `AND tours.transportationId=${transTypeId}`
     }
 
     var categoryQuery = '';
@@ -1601,9 +1600,7 @@ module.exports.getExpiredSoonTours = async (req, res) => {
       ${transportationQuery} 
       ${destinationQuery}
       ${dayQuery}
-      ${sortQuery}
-    GROUP BY tours.id, tours.title, tours.code, tours.status, tours.isFeatured, 
-    destination.title, departure.title, transportation.title
+    GROUP BY tours.id, destination.title, departure.title, transportation.title
     `;
 
     const tours = await sequelize.query(query, {
@@ -1883,56 +1880,6 @@ module.exports.updateMultiple = async (req, res) => {
 
 }
 
-/**
- * @swagger
- * /tours/statistics:
- *   get:
- *     tags:
- *       - Tours
- *     summary: Lấy thống kê của tour
- *     description: API này lấy thông tin thống kê của một tour cụ thể, dựa trên `tourId` được cung cấp.
- *     parameters:
- *       - in: path
- *         name: tourId
- *         required: true
- *         schema:
- *           type: string
- *         description: ID của tour cần lấy thống kê.
- *     responses:
- *       200:
- *         description: Lấy thông tin thống kê tour thành công.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   description: Thông báo thành công.
- *                 tour:
- *                   type: object
- *                   description: Thông tin chi tiết của tour.
- *                   properties:
- *                     id:
- *                       type: string
- *                       description: ID của tour.
- *                     title:
- *                       type: string
- *                       description: Tên của tour.
- *                     code:
- *                       type: string
- *                       description: Mã của tour.
- *                     status:
- *                       type: string
- *                       description: Trạng thái của tour.
- *                     isFeatured:
- *                       type: string
- *                       description: Trạng thái nổi bật của tour.
- *       400:
- *         description: Không tìm thấy tour với `tourId` được cung cấp.
- *       500:
- *         description: Lỗi hệ thống khi lấy thống kê tour.
- */
 
 // [GET] /tours/statistics
 module.exports.statistics = async (req, res) => {
