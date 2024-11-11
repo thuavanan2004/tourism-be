@@ -71,8 +71,10 @@ module.exports.login = async (req, res) => {
 
   try {
     const admin = await Admin.findOne({
-      email: email,
-      status: true
+      where: {
+        email: email,
+        status: true
+      }
     });
 
     if (!admin) {
