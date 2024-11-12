@@ -16,12 +16,12 @@ module.exports.buildTourQuery = (filters) => {
 
   let destinationQuery = '';
   if (filters.destinationTo) {
-    destinationQuery = `AND tours.departureId=${filters.destinationTo}`;
+    destinationQuery = `AND tours.destinationId=${filters.destinationTo}`;
   }
 
   let departureQuery = '';
   if (filters.departureFrom) {
-    departureQuery = `AND tours.destinationId=${filters.departureFrom}`;
+    departureQuery = `AND tours.departureId=${filters.departureFrom}`;
   }
 
   let transportationQuery = '';
