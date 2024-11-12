@@ -14,6 +14,9 @@ const Destination = require("../../models/destination.model");
 const Departure = require("../../models/departure.model");
 const Transportation = require("../../models/transportation.model");
 const {
+  buildTourQuery
+} = require("../../helpers/builTourQuery.helper");
+const {
   QueryTypes,
 } = require("sequelize");
 
@@ -1059,117 +1062,28 @@ module.exports.removeTour = async (req, res) => {
 
 // [GET] /tour/get-all-tour
 module.exports.getAllTour = async (req, res) => {
-  const {
-    destinationTo,
-    departureFrom,
-    fromDate,
-    transTypeId,
-    categoryId,
-    status,
-    isFeatured,
-    sortOder
-  } = req.query;
+  const filters = req.query;
 
   try {
-    let sortQuery = '';
-    if (sortOder) {
-      sortQuery = `ORDER BY tour_detail.adultPrice ${sortOder === 'desc' ? 'DESC' : 'ASC'}`;
-    }
-
-    var statusQuery = '';
-    if (status) {
-      statusQuery = `AND tours.status=${status === '1'}`
-    }
-
-    var isFeaturedQuery = '';
-    if (isFeatured) {
-      isFeaturedQuery = `AND tours.isFeatured=${isFeatured}`
-    }
-
-    var destinationQuery = '';
-    if (destinationTo) {
-      destinationQuery = `AND tours.departureId=${destinationTo}`
-    }
-
-    var departureQuery = '';
-    if (departureFrom) {
-      departureQuery = `AND tours.destinationId=${departureFrom}`
-    }
-
-    var transportationQuery = '';
-    if (transTypeId) {
-      transportationQuery = `AND tours.transportationId=${transTypeId}`
-    }
-
-    var categoryQuery = '';
-    if (categoryId) {
-      categoryQuery = `AND categories.id=${categoryId}`
-    }
-
-    var dayQuery = '';
-    if (fromDate) {
-      const [year, month, day] = fromDate.split("-");
-      const dayFormat = new Date(year, month - 1, day);
-      const formattedDate = dayFormat.toISOString().slice(0, 19).replace('T', ' ');
-      dayQuery = `AND tour_detail.dayStart > '${formattedDate}'`
-    }
-
-    const query = `
-    SELECT 
-      tours.title, 
-      IFNULL(MAX(images.source), 'default_image.jpg') AS source,
-      tours.code, 
-      tours.status, 
-      tours.isFeatured, 
-      tour_detail.adultPrice, 
-      MIN(tour_detail.dayStart) AS dayStart, 
-      tour_detail.dayReturn, 
-      categories.title AS categories,
-      destination.title AS destination, 
-      departure.title AS departure, 
-      transportation.title AS transportation
-    FROM tours
-    LEFT JOIN tours_categories ON tours.id = tours_categories.tourId
-    LEFT JOIN categories ON tours_categories.categoryId = categories.id
-    LEFT JOIN destination ON tours.destinationId = destination.id
-    LEFT JOIN transportation ON transportation.id = tours.transportationId
-    LEFT JOIN tour_detail ON tour_detail.tourId = tours.id
-    LEFT JOIN departure ON departure.id = tours.departureId
-    LEFT JOIN images ON images.tourId = tours.id
-    WHERE
-      categories.status = 1
-      AND categories.deleted = 0
-      AND images.isMain = 1
-      AND tours.deleted = false
-      AND tours.status = 1
-      AND DATEDIFF(tour_detail.dayStart, NOW()) >= 0
-      ${statusQuery}
-      ${isFeaturedQuery}
-      ${categoryQuery}
-      ${departureQuery}
-      ${transportationQuery} 
-      ${destinationQuery}
-      ${dayQuery}
-    GROUP BY tours.id, destination.title, departure.title, transportation.title
-      ${sortQuery}
-    `;
-
+    const query = buildTourQuery(filters, filters.sortOder);
     const tours = await sequelize.query(query, {
       type: QueryTypes.SELECT
     });
-    if (tours.length == 0) {
+
+    if (tours.length === 0) {
       return res.status(400).json({
         message: "Không lấy được tour nào!"
-      })
+      });
     }
 
     res.status(200).json(tours);
   } catch (error) {
-    console.error("Error fetching category tours:", error);
+    console.error("Error fetching all tours:", error);
     res.status(500).json({
       error: "Lỗi lấy dữ liệu"
     });
   }
+
 };
 
 /**
@@ -1286,114 +1200,30 @@ module.exports.getAllTour = async (req, res) => {
 
 // [GET] /tours/expired
 module.exports.getExpiredTours = async (req, res) => {
-  const {
-    destinationTo,
-    departureFrom,
-    fromDate,
-    transTypeId,
-    categoryId,
-    status,
-    isFeatured,
-    sortOder
-  } = req.query;
+  const filters = req.query;
 
   try {
-    let sortQuery = '';
-    if (sortOder) {
-      sortQuery = `ORDER BY tour_detail.adultPrice ${sortOder === 'desc' ? 'DESC' : 'ASC'}`;
-    }
-
-    var statusQuery = '';
-    if (status) {
-      statusQuery = `AND tours.status=${status === '1'}`
-    }
-
-    var isFeaturedQuery = '';
-    if (isFeaturedQuery) {
-      isFeaturedQuery = `AND tours.isFeatured=${isFeatured}`
-    }
-
-    var destinationQuery = '';
-    if (destinationTo) {
-      destinationQuery = `AND tours.departureId=${destinationTo}`
-    }
-
-    var departureQuery = '';
-    if (departureFrom) {
-      departureQuery = `AND tours.destinationId=${departureFrom}`
-    }
-
-    var transportationQuery = '';
-    if (transTypeId) {
-      transportationQuery = `AND tours.transportationId=${transTypeId}`
-    }
-
-    var categoryQuery = '';
-    if (categoryId) {
-      categoryQuery = `AND categories.id=${categoryId}`
-    }
-
-    var dayQuery = '';
-    if (fromDate) {
-      const [year, month, day] = fromDate.split("-");
-      const dayFormat = new Date(year, month - 1, day);
-      const formattedDate = dayFormat.toISOString().slice(0, 19).replace('T', ' ');
-      dayQuery = `AND tour_detail.dayStart > '${formattedDate}'`
-    }
-
-    const query = `
-    SELECT 
-      tours.title, 
-      IFNULL(images.source, 'default_image.jpg') AS source, 
-      tours.code, 
-      tours.status, 
-      tours.isFeatured, 
-      tour_detail.adultPrice, 
-      MIN(tour_detail.dayStart) AS dayStart, 
-      tour_detail.dayReturn, 
-      categories.title AS categories,
-      destination.title AS destination, 
-      departure.title AS departure, 
-      transportation.title AS transportation,
-      COUNT(tour_detail.id) AS countTourDetail
-    FROM tours
-    LEFT JOIN tours_categories ON tours.id = tours_categories.tourId
-    LEFT JOIN categories ON tours_categories.categoryId = categories.id
-    LEFT JOIN destination ON tours.destinationId = destination.id
-    LEFT JOIN transportation ON transportation.id = tours.transportationId
-    LEFT JOIN tour_detail ON tour_detail.tourId = tours.id
-    LEFT JOIN departure ON departure.id = tours.departureId
-    LEFT JOIN images ON images.tourId = tours.id
-    WHERE
-      DATEDIFF(tour_detail.dayStart, NOW()) > 0 
-      ${statusQuery}
-      ${isFeaturedQuery}
-      ${categoryQuery}
-      ${departureQuery}
-      ${transportationQuery} 
-      ${destinationQuery}
-      ${dayQuery}
-    GROUP BY tours.id, destination.title, departure.title, transportation.title
-    HAVING countTourDetail = 0;
-    `;
-
-    const tours = await sequelize.query(query, {
+    const query = buildTourQuery(filters);
+    const expiredToursQuery = query.replace('DATEDIFF(tour_detail.dayStart, NOW()) >= 0', 'DATEDIFF(tour_detail.dayStart, NOW()) < 0');
+    const tours = await sequelize.query(expiredToursQuery, {
       type: QueryTypes.SELECT
     });
-    if (tours.length == 0) {
+
+    if (tours.length === 0) {
       return res.status(400).json({
         message: "Không lấy được tour nào!"
-      })
+      });
     }
 
     res.status(200).json(tours);
   } catch (error) {
-    console.error("Error fetching category tours:", error);
+    console.error("Error fetching expired tours:", error);
     res.status(500).json({
       error: "Lỗi lấy dữ liệu tour hết hạn"
     });
   }
-}
+};
+
 
 /**
  * @swagger
@@ -1512,115 +1342,33 @@ module.exports.getExpiredTours = async (req, res) => {
 
 // [GET] /tours/expired-soon
 module.exports.getExpiredSoonTours = async (req, res) => {
-  const {
-    destinationTo,
-    departureFrom,
-    fromDate,
-    transTypeId,
-    categoryId,
-    status,
-    isFeatured,
-    sortOder
-  } = req.query;
+  const filters = req.query;
 
   try {
-    let sortQuery = '';
-    if (sortOder) {
-      sortQuery = `ORDER BY tour_detail.adultPrice ${sortOder === 'desc' ? 'DESC' : 'ASC'}`;
-    }
-
-    var statusQuery = '';
-    if (status) {
-      statusQuery = `AND tours.status=${status === '1'}`
-    }
-
-    var isFeaturedQuery = '';
-    if (isFeaturedQuery) {
-      isFeaturedQuery = `AND tours.isFeatured=${isFeatured}`
-    }
-
-    var destinationQuery = '';
-    if (destinationTo) {
-      destinationQuery = `AND tours.departureId=${destinationTo}`
-    }
-
-    var departureQuery = '';
-    if (departureFrom) {
-      departureQuery = `AND tours.destinationId=${departureFrom}`
-    }
-
-    var transportationQuery = '';
-    if (transTypeId) {
-      transportationQuery = `AND tours.transportationId=${transTypeId}`
-    }
-
-    var categoryQuery = '';
-    if (categoryId) {
-      categoryQuery = `AND categories.id=${categoryId}`
-    }
-
-    var dayQuery = '';
-    if (fromDate) {
-      const [year, month, day] = fromDate.split("-");
-      const dayFormat = new Date(year, month - 1, day);
-      const formattedDate = dayFormat.toISOString().slice(0, 19).replace('T', ' ');
-      dayQuery = `AND tour_detail.dayStart > '${formattedDate}'`
-    }
-
-    const query = `
-    SELECT 
-      tours.title, 
-      IFNULL(images.source, 'default_image.jpg') AS source, 
-      tours.code, 
-      tours.status, 
-      tours.isFeatured, 
-      tour_detail.adultPrice, 
-      MIN(tour_detail.dayStart) AS dayStart, 
-      tour_detail.dayReturn, 
-      categories.title AS categories,
-      destination.title AS destination, 
-      departure.title AS departure, 
-      transportation.title AS transportation,
-      COUNT(DISTINCT tour_detail.id) AS countTourDetailExpired,
-      DATEDIFF(MIN(tour_detail.dayStart), NOW()) AS daysRemaining
-    FROM tours
-    LEFT JOIN tours_categories ON tours.id = tours_categories.tourId
-    LEFT JOIN categories ON tours_categories.categoryId = categories.id
-    LEFT JOIN destination ON tours.destinationId = destination.id
-    LEFT JOIN transportation ON transportation.id = tours.transportationId
-    LEFT JOIN tour_detail ON tour_detail.tourId = tours.id
-    LEFT JOIN departure ON departure.id = tours.departureId
-    LEFT JOIN images ON images.tourId = tours.id
-    WHERE
-      DATEDIFF(tour_detail.dayStart, NOW()) BETWEEN 0 AND 7 
-      ${statusQuery}
-      ${isFeaturedQuery}
-      ${categoryQuery}
-      ${departureQuery}
-      ${transportationQuery} 
-      ${destinationQuery}
-      ${dayQuery}
-    GROUP BY tours.id, destination.title, departure.title, transportation.title
-    `;
-
-    const tours = await sequelize.query(query, {
+    const query = buildTourQuery(filters);
+    const expiredSoonQuery = query.replace(
+      'DATEDIFF(tour_detail.dayStart, NOW()) >= 0',
+      'DATEDIFF(tour_detail.dayStart, NOW()) BETWEEN 0 AND 7'
+    );
+    const tours = await sequelize.query(expiredSoonQuery, {
       type: QueryTypes.SELECT
     });
 
-    if (tours.length == 0) {
+    if (tours.length === 0) {
       return res.status(400).json({
         message: "Không lấy được tour nào!"
-      })
+      });
     }
 
     res.status(200).json(tours);
   } catch (error) {
-    console.error("Error fetching category tours:", error);
+    console.error("Error fetching expired soon tours:", error);
     res.status(500).json({
-      error: "Lỗi lấy dữ liệu tour hết hạn"
+      error: "Lỗi lấy dữ liệu tour sắp hết hạn"
     });
   }
-}
+};
+
 
 /**
  * @swagger
