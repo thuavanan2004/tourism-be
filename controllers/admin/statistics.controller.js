@@ -161,7 +161,7 @@ module.exports.tours = async (req, res) => {
       YEAR(t.createdAt) AS year,
       MONTH(t.createdAt) AS month,
       COUNT(t.id) AS count
-    FROM Tours t
+    FROM tours t
     GROUP BY year, month
     ORDER BY year DESC, month DESC;
     `;
@@ -177,7 +177,7 @@ module.exports.tours = async (req, res) => {
       YEAR(t.createdAt) AS year,
       WEEK(t.createdAt) AS week,
       COUNT(t.id) AS count
-    FROM Tours t
+    FROM tours t
     GROUP BY year, week
     ORDER BY year DESC, week DESC;
     `;
