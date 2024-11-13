@@ -43,6 +43,7 @@ module.exports.buildTourQuery = (filters) => {
 
   return `
     SELECT 
+      tours.id,
       tours.title, 
       IFNULL(MAX(images.source), 'default_image.jpg') AS source,
       tours.code, 

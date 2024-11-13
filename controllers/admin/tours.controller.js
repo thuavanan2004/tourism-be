@@ -1026,6 +1026,9 @@ module.exports.removeTour = async (req, res) => {
  *               items:
  *                 type: object
  *                 properties:
+ *                   id:
+ *                     type: string
+ *                     description: Id tour.
  *                   title:
  *                     type: string
  *                     description: Tên của tour.
@@ -1063,7 +1066,6 @@ module.exports.removeTour = async (req, res) => {
 // [GET] /tour/get-all-tour
 module.exports.getAllTour = async (req, res) => {
   const filters = req.query;
-
   try {
     const query = buildTourQuery(filters, filters.sortOder);
     const tours = await sequelize.query(query, {
@@ -1157,6 +1159,9 @@ module.exports.getAllTour = async (req, res) => {
  *               items:
  *                 type: object
  *                 properties:
+ *                   id:
+ *                     type: string
+ *                     description: Id tour.
  *                   title:
  *                     type: string
  *                     description: Tên của tour.
@@ -1296,6 +1301,9 @@ module.exports.getExpiredTours = async (req, res) => {
  *               items:
  *                 type: object
  *                 properties:
+ *                   id:
+ *                     type: string
+ *                     description: Id tour.
  *                   title:
  *                     type: string
  *                     description: Tên của tour.
