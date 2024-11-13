@@ -709,7 +709,7 @@ module.exports.rolePermissions = async (req, res) => {
 
 /**
  * @swagger
- * /roles/{roleId}/permissions/{permissionId}:
+ * /roles/{roleId}/permissions:
  *   delete:
  *     tags:
  *       - Roles
@@ -723,13 +723,19 @@ module.exports.rolePermissions = async (req, res) => {
  *         schema:
  *           type: integer
  *           example: 1
- *       - in: path
- *         name: permissionId
- *         required: true
- *         description: ID của quyền cần xóa khỏi role.
- *         schema:
- *           type: integer
- *           example: 2
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               permissionIds:
+ *                 type: array
+ *                 items:
+ *                   type: integer
+ *                 example: [2, 3, 4]
+ *                 description: Danh sách các quyền cần xóa khỏi role.
  *     responses:
  *       200:
  *         description: Xóa quyền khỏi role thành công.
@@ -760,17 +766,26 @@ module.exports.rolePermissions = async (req, res) => {
  *               properties:
  *                 message:
  *                   type: string
- *                   example: "Lỗi xóa một quyền cho role"
+ *                   example: "Lỗi xóa quyền cho role"
  */
 
-// [DELETE] /:roleId/permissions/:permissionId
+
+// [DELETE] /:roleId/permissions
 module.exports.deletePermission = async (req, res) => {
   const roleId = req.params.roleId;
-  const permissionId = req.params.permissionId;
-  if (!roleId || !permissionId) {
+  const {
+    permissionIds
+  } = req.body;
+  if (!roleId) {
     return res.status(400).json({
-      message: "Yêu cầu gửi lên roleId và permissionId"
+      message: "Yêu cầu gửi lên roleId"
     })
+  }
+
+  if (!Array.isArray(permissionIds) || permissionIds.length === 0) {
+    return res.status(400).json({
+      message: "Yêu cầu gửi lên permissionIds phải là một mảng và không được trống"
+    });
   }
   try {
     const role = await Role.findByPk(roleId);
@@ -778,29 +793,44 @@ module.exports.deletePermission = async (req, res) => {
       return res.status(400).json("Role không tồn tại!")
     }
 
-    const permission = await Permissions.findByPk(permissionId);
-    if (!permission) {
-      return res.status(400).json("Permission không tồn tại!")
+    const permissions = await Permissions.findAll({
+      where: {
+        id: permissionIds
+      }
+    });
+    if (permissions.length === 0) {
+      return res.status(400).json({
+        message: "Không tìm thấy bất kỳ quyền nào trùng với danh sách permissionIds cung cấp"
+      });
     }
-
-    const rolePermission = await RolePermissions.findOne({
+    const existingRolePermissions = await RolePermissions.findAll({
       where: {
         roleId: roleId,
-        permissionId: permissionId
+        permissionId: permissionIds
       }
-    })
-    if (!rolePermission) {
-      return res.status(400).json("Permission không tồn tại trong Role!")
+    });
+
+    if (existingRolePermissions.length === 0) {
+      return res.status(400).json({
+        message: "Không có quyền nào được gán cho role này trong danh sách permissionIds"
+      });
     }
+
+    await RolePermissions.destroy({
+      where: {
+        roleId: roleId,
+        permissionId: permissionIds
+      }
+    });
 
     await rolePermission.destroy();
     res.status(200).json({
-      message: "Xóa quyền cho Role thành công!"
+      message: "Xóa danh sách quyền cho Role thành công!"
     })
   } catch (error) {
     console.log(error);
     res.status(500).json({
-      message: "Lỗi xóa một quyền cho role"
+      message: "Lỗi xóa danh sách quyền một quyền cho role"
     })
   }
 }
