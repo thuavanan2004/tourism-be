@@ -823,7 +823,6 @@ module.exports.deletePermission = async (req, res) => {
       }
     });
 
-    await rolePermission.destroy();
     res.status(200).json({
       message: "Xóa danh sách quyền cho Role thành công!"
     })
