@@ -20,6 +20,6 @@ router.patch("/update/:adminId", upload.single("avatar"), uploadCloudinaryMiddle
 
 router.delete("/delete/:adminId", checkPermission("DELETE_ADMIN"), controllers.delete);
 
-router.patch("/change-status/:adminId", checkPermission("UPDATE_ADMIN"), controllers.changeStatus)
+router.patch("/change-status/:adminId", checkPermission("UPDATE_ADMIN"), controllers.changeStatus);
 
 module.exports = router;

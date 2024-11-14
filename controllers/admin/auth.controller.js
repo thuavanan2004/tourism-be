@@ -145,3 +145,75 @@ module.exports.logout = async (req, res) => {
   res.clearCookie("token");
   res.status(200).json("Logout success");
 }
+
+/**
+ * @swagger
+ * /auth/verify-token:
+ *   post:
+ *     summary: Xác thực và kiểm tra người dùng admin
+ *     description: Kiểm tra xem token có hợp lệ hay không và trả về thông tin của admin nếu hợp lệ.
+ *     tags:
+ *       - Auth
+ *     requestBody:
+ *       description: Token xác thực của người dùng admin
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               token:
+ *                 type: string
+ *                 description: Token của người dùng admin
+ *                 example: "your-jwt-token"
+ *     responses:
+ *       200:
+ *         description: Thành công, trả về ID của admin
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 adminId:
+ *                   type: string
+ *                   description: ID của admin
+ *                   example: "12345"
+ *       400:
+ *         description: Admin không tồn tại
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Admin không tồn tại"
+ *       500:
+ *         description: Lỗi hệ thống
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Lỗi xác thực"
+ */
+// [POST] /auth/verify-token
+module.exports.verifyToken = async (req, res) => {
+  try {
+    const adminId = res.locals.adminId;
+
+    const admin = await Admin.findByPk(adminId);
+    if (!admin) {
+      return res.status(400).json({
+        message: "Admin không tồn tại"
+      })
+    };
+
+    res.status(200).json(adminId);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json("Lỗi xác thực");
+  }
+}
