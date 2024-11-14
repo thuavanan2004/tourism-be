@@ -822,7 +822,7 @@ module.exports.getTour = async (req, res) => {
         tourId: tourId
       },
       attributes: {
-        exclude: ['createdAt', 'updatedAt']
+        exclude: ['createdAt', 'updatedAt', 'tourId']
       }
     });
     const schedule = await Schedule.findAll({
@@ -830,33 +830,33 @@ module.exports.getTour = async (req, res) => {
         tourId: tourId
       },
       attributes: {
-        exclude: ['createdAt', 'updatedAt']
+        exclude: ['createdAt', 'updatedAt', 'tourId']
       }
     });
     const destination = await Destination.findOne({
       where: {
         id: tour.destinationId
       },
-      attributes: {
-        exclude: ['deleted']
-      }
+      attributes: ['id', 'title']
     });
     const departure = await Departure.findOne({
       where: {
         id: tour.departureId
-      }
+      },
+      attributes: ['id', 'title']
     });
     const transportation = await Transportation.findOne({
       where: {
         id: tour.transportationId
-      }
+      },
+      attributes: ['id', 'title']
     });
     const images = await Image.findAll({
       where: {
         tourId: tourId
       },
       attributes: {
-        exclude: ['createdAt', 'updatedAt']
+        exclude: ['createdAt', 'updatedAt', 'tourId']
       }
     });
     const tourDetails = await TourDetail.findAll({
@@ -867,6 +867,8 @@ module.exports.getTour = async (req, res) => {
         exclude: ['createdAt', 'updatedAt', 'tourId']
       }
     });
+
+
     res.status(200).json({
       tour: tour,
       information: information,

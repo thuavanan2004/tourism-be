@@ -502,7 +502,7 @@ module.exports.changeStatus = async (req, res) => {
       message: "Vui lòng gửi lên id admin cần xóa"
     })
   }
-  if (!status) {
+  if (status === undefined) {
     return res.status(400).json({
       message: "Vui lòng gửi lên status"
     })

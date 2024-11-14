@@ -68,7 +68,7 @@ module.exports.buildTourQuery = (filters) => {
       categories.status = 1
       AND categories.deleted = 0
       AND images.isMain = 1
-      AND tours.deleted = false
+      AND tours.deleted = 0
       AND tours.status = 1
       AND DATEDIFF(tour_detail.dayStart, NOW()) >= 0
       AND tour_detail.dayStart = (
