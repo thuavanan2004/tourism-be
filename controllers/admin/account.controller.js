@@ -65,6 +65,7 @@ module.exports.getAll = async (req, res) => {
 
         if (role) {
           return {
+            id: item.id,
             fullName: item.fullName,
             email: item.email,
             avatar: item.avatar,
