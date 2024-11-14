@@ -21,7 +21,7 @@ router.get("/permissions", checkPermission("READ_PERMISSIONS"), controllers.perm
 
 router.get("/:roleId/permissions", checkPermission("READ_PERMISSIONS"), controllers.rolePermissions);
 
-router.delete("/:roleId/permissions/:permissionId", checkPermission("UPDATE_PERMISSIONS"), controllers.deletePermission)
+router.delete("/:roleId/permissions", checkPermission("UPDATE_PERMISSIONS"), controllers.deletePermission)
 
 
 module.exports = router;
