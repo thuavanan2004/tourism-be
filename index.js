@@ -20,12 +20,14 @@ mysql: //root:nwSxozPCwWXzZHnltrpZbretJXVpcGqz@junction.proxy.rlwy.net:27845/rai
 const app = express();
 const port = process.env.PORT;
 
-app.options('*', cors());
+// app.options('*', cors());
 app.use(cors({
-  origin: 'http://localhost:5173',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-  credentials: true
+  origin: 'http://localhost:5173', // Chỉ cho phép origin này
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'], // Các header được phép
+  credentials: true,
 }));
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: false
