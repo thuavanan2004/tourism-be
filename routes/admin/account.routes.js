@@ -18,7 +18,7 @@ router.post("/create", upload.single("avatar"), uploadCloudinaryMiddleware.uploa
 
 router.patch("/update/:adminId", upload.single("avatar"), uploadCloudinaryMiddleware.uploadSingle, checkPermission("UPDATE_ADMIN"), controllers.update);
 
-router.patch("/remove/:adminId", checkPermission("DELETE_ADMIN"), controllers.remove);
+router.delete("/delete/:adminId", checkPermission("DELETE_ADMIN"), controllers.delete);
 
 router.patch("/change-status/:adminId", checkPermission("UPDATE_ADMIN"), controllers.changeStatus)
 
