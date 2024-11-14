@@ -400,8 +400,8 @@ module.exports.update = async (req, res) => {
  *                   description: Thông báo lỗi.
  */
 
-// [PATCH] /account/remove/:adminId
-module.exports.remove = async (req, res) => {
+// [DELETE] /account/delete/:adminId
+module.exports.delete = async (req, res) => {
   const adminId = req.params.adminId;
   if (!adminId) {
     return res.status(400).json({
@@ -422,12 +422,8 @@ module.exports.remove = async (req, res) => {
       })
     }
 
-    const adminIdDeleted = res.locals.adminId;
 
-    await admin.update({
-      deleted: true,
-      deletedBy: adminIdDeleted
-    })
+    await admin.destroy();
 
     res.status(200).json({
       message: "Xóa tài khoản thành công"
