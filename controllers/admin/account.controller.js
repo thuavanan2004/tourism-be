@@ -166,7 +166,7 @@ module.exports.create = async (req, res) => {
     roleId
   } = req.body;
   if (!fullName || !email || !password || !roleId) {
-    return res.status(400).status({
+    return res.status(400).json({
       message: "Vui lòng gửi đủ thông tin"
     })
   }

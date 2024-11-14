@@ -691,11 +691,7 @@ module.exports.rolePermissions = async (req, res) => {
         roleId: role.id
       }
     })
-    if (permissions.length === 0 || !Array.isArray(permissions)) {
-      return res.status(400).json({
-        message: "Danh sách quyền rỗng"
-      })
-    }
+
     res.status(200).json({
       permissions: permissions
     })
