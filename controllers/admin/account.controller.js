@@ -284,7 +284,7 @@ module.exports.create = async (req, res) => {
  *                   description: Thông báo lỗi.
  */
 
-// [PATCH] /account/update
+// [PATCH] /account/update/:adminId
 module.exports.update = async (req, res) => {
   const adminId = req.params.adminId;
   const {

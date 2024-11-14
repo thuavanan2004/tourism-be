@@ -21,7 +21,7 @@ const app = express();
 const port = process.env.PORT;
 
 app.use(cors({
-  origin: ['https://tourism-be-1ipl.onrender.com', 'http://localhost:5173'],
+  origin: ['*'],
 }));
 
 // app.options('*', cors());
