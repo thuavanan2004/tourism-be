@@ -21,7 +21,7 @@ const app = express();
 const port = process.env.PORT;
 
 app.use(cors({
-  origin: 'http://localhost:5173', // Chỉ cho phép origin này
+  origin: 'http://localhost:5173',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
