@@ -23,8 +23,8 @@ const port = process.env.PORT;
 app.use(cors({
   origin: 'http://localhost:5173', // Chỉ cho phép origin này
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'], // Các header được phép
   credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
 }));
 
 app.options('*', cors());
