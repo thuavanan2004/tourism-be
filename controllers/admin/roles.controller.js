@@ -5,6 +5,7 @@ const sequelize = require("../../config/database");
 const Permissions = require("../../models/permissions.model");
 const RolePermissions = require("../../models/role-permissions.model");
 const Role = require("../../models/role.model");
+const Admin = require("../../models/admin.model");
 
 /**
  * @swagger
@@ -82,6 +83,88 @@ module.exports.getAll = async (req, res) => {
     console.log(error);
     res.status(500).json({
       message: "Lỗi khi lấy danh sách nhóm quyền"
+    })
+  }
+}
+
+/**
+ * @swagger
+ * /roles/detail/{adminId}:
+ *   get:
+ *     summary: Lấy thông tin quyền của admin
+ *     description: Lấy thông tin quyền của admin theo `adminId` và trả về thông tin quyền của admin đó.
+ *     tags:
+ *       - Roles
+ *     parameters:
+ *       - name: adminId
+ *         in: path
+ *         required: true
+ *         description: ID của admin cần lấy thông tin quyền
+ *         schema:
+ *           type: string
+ *           example: "1"
+ *     responses:
+ *       200:
+ *         description: Thành công, trả về thông tin quyền của admin
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   description: ID của quyền
+ *                   example: 1
+ *                 name:
+ *                   type: string
+ *                   description: Tên quyền
+ *                   example: "Admin"
+ *                 description:
+ *                   type: string
+ *                   description: Mô tả quyền
+ *                   example: "Quyền quản trị viên"
+ *       400:
+ *         description: Admin không tồn tại
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Admin không tồn tại!"
+ *       500:
+ *         description: Lỗi hệ thống
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Lỗi khi quyền"
+ */
+// [GET] /roles/detail
+module.exports.detail = async (req, res) => {
+
+  try {
+    const adminId = req.params.adminId;
+    const admin = await Admin.findByPk(adminId);
+    if (!admin) {
+      return res.status(400).json("Admin không tồn tại!");
+    }
+    const role = await Role.findOne({
+      where: {
+        id: admin.id
+      }
+    });
+
+
+    res.status(200).json(role)
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Lỗi khi quyền"
     })
   }
 }

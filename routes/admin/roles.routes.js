@@ -9,6 +9,8 @@ const controllers = require("../../controllers/admin/roles.controller");
 
 router.get("/get-all", checkPermission("READ_ROLES"), controllers.getAll);
 
+router.get("/detail/:adminId", controllers.detail);
+
 router.post("/create", checkPermission("CREATE_ROLES"), controllers.create);
 
 router.patch("/update/:roleId", checkPermission("UPDATE_ROLES"), controllers.update);
