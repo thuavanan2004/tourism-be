@@ -21,13 +21,10 @@ const app = express();
 const port = process.env.PORT;
 
 app.use(cors({
-  origin: '*',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  credentials: true,
-  allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+  origin: ['https://tourism-be-1ipl.onrender.com', 'http://localhost:5173'],
 }));
 
-app.options('*', cors());
+// app.options('*', cors());
 
 
 app.use(bodyParser.json());
