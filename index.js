@@ -20,12 +20,30 @@ mysql: //root:nwSxozPCwWXzZHnltrpZbretJXVpcGqz@junction.proxy.rlwy.net:27845/rai
 const app = express();
 const port = process.env.PORT;
 
-app.use(cors({
-  origin: ['*'],
-}));
+// app.use(cors({
+//   origin: '*',
+//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+//   credentials: true,
+//   allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+// }));
 
 // app.options('*', cors());
 
+app.use((req, res, next) => {
+  // Thêm header CORS cho mọi yêu cầu
+  res.header('Access-Control-Allow-Origin', 'http://localhost:5173'); // Cho phép yêu cầu từ localhost:5173
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS'); // Các phương thức HTTP được phép
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With'); // Các header được phép
+  res.header('Access-Control-Allow-Credentials', 'true'); // Nếu bạn cần gửi cookie hoặc thông tin xác thực
+
+  // Nếu là preflight request (OPTIONS), chỉ cần trả về 200 OK
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+
+  // Tiến hành xử lý yêu cầu tiếp theo
+  next();
+});
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
