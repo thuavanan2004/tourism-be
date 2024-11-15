@@ -5,7 +5,7 @@ const sendEmailCofirmOrderHelper = require("../../helpers/sendEmailCofirmOrder.h
 
 /**
  * @swagger
- * /order/get-all:
+ * /orders/get-all:
  *   get:
  *     tags:
  *       - Order
@@ -71,7 +71,7 @@ module.exports.getAllOrders = async (req, res) => {
 
 /**
  * @swagger
- * /order/order-item/{orderId}:
+ * /orders/order-item/{orderId}:
  *   get:
  *     tags:
  *       - Order
@@ -221,7 +221,7 @@ module.exports.orderItem = async (req, res) => {
 
 /**
  * @swagger
- * /order/change-status-transaction/{transactionId}:
+ * /orders/change-status-transaction/{transactionId}:
  *   patch:
  *     tags:
  *       - Order
@@ -326,7 +326,7 @@ module.exports.changeStatusTransaction = async (req, res) => {
 
 /**
  * @swagger
- * /order/change-status-order/{orderId}:
+ * /orders/change-status-order/{orderId}:
  *   patch:
  *     tags:
  *       - Order
@@ -443,7 +443,7 @@ module.exports.changeStatusOrder = async (req, res) => {
 
 /**
  * @swagger
- * /order/remove/{orderId}:
+ * /orders/remove/{orderId}:
  *   patch:
  *     tags:
  *       - Order
