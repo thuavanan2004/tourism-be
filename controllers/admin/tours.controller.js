@@ -1,7 +1,6 @@
 const generateCodeHelper = require("../../helpers/generateCode.helper");
 const transformeDataHelper = require("../../helpers/transformeData");
 const slugify = require("slugify");
-const unidecode = require("unidecode")
 const Tour = require("../../models/tour.model");
 const sequelize = require("../../config/database");
 const Category = require("../../models/category.model");
@@ -110,66 +109,20 @@ const {
 
 //[GET] /tours/search
 module.exports.search = async (req, res) => {
-  const {
-    title,
-  } = req.query;
-
   const replacements = {};
 
   // Tìm kiếm theo tiêu đề
-  if (title) {
-    const titleUnidecode = unidecode(title);
-    const titleSlug = titleUnidecode.replace(/\s+/g, "-");
-    const titleRegex = `%${titleSlug}%`;
-    var querySearch = "AND tours.slug LIKE :titleSlug";
-    replacements.titleSlug = titleRegex;
-  }
+
 
 
   try {
-    let query = `
-    SELECT 
-      tours.title, 
-      IFNULL(images.source, 'default_image.jpg') AS source, 
-      tours.code, 
-      tours.status, 
-      tours.isFeatured, 
-      tour_detail.adultPrice, 
-      MIN(tour_detail.dayStart) AS dayStart, 
-      tour_detail.dayReturn, 
-      categories.title AS categories,
-      destination.title AS destination, 
-      departure.title AS departure, 
-      transportation.title AS transportation
-    FROM tours
-    JOIN tours_categories ON tours.id = tours_categories.tourId
-    JOIN categories ON tours_categories.categoryId = categories.id
-    JOIN destination ON tours.destinationId = destination.id
-    JOIN transportation ON transportation.id = tours.transportationId
-    JOIN tour_detail ON tour_detail.tourId = tours.id
-    JOIN departure ON departure.id = tours.departureId
-    JOIN images ON images.tourId = tours.id
-    WHERE
-      tours.status = 1
-      AND tours.deleted = 0
-      AND DATEDIFF(tour_detail.dayStart, NOW()) > 0
-      AND categories.deleted = 0
-      AND categories.status = 1
-      ${querySearch}
-    GROUP BY tours.id, tours.title, tours.code, tours.status, tours.isFeatured, 
-    destination.title, departure.title, transportation.title
-  `;
-    // Gọi truy vấn cơ sở dữ liệu và chờ kết quả
+    const filters = req.query;
+    const query = buildTourQuery(filters);
     const tours = await sequelize.query(query, {
       type: QueryTypes.SELECT,
-      replacements
+      replacements: replacements
     });
 
-    if (tours.length === 0) {
-      return res.status(404).json({
-        message: 'Không tìm thấy tour nào.'
-      });
-    }
 
     res.status(200).json(tours);
   } catch (error) {
@@ -653,23 +606,9 @@ module.exports.edit = async (req, res) => {
 
     // Update images
     if (images && Array.isArray(images) && images.length > 0) {
-      await Image.destroy({
-        where: {
-          tourId
-        },
-        transaction
-      });
-
-      if (!infoImage || JSON.parse(infoImage).length !== images.length) {
-        throw new Error("infoImage không được xác định đúng hoặc không khớp với độ dài của hình ảnh.");
-      }
-
-      const infoImageParse = JSON.parse(infoImage);
       const dataImages = images.map((file, index) => ({
         tourId,
         source: file,
-        name: infoImageParse[index].name || "",
-        isMain: infoImageParse[index].isMain === 'true'
       }));
 
       await Image.bulkCreate(dataImages, {
@@ -808,6 +747,9 @@ module.exports.getTour = async (req, res) => {
         exclude: ['createdAt', 'updatedAt', 'deleted', 'deletedAt', 'deletedBy', 'updatedBy']
       }
     });
+    const tourCategory = await TourCategory.findByPk(tour.id);
+    const category = await Category.findByPk(tourCategory.categoryId)
+
     if (!tour) {
       return res.status(400).json("Không tìm thấy tour");
     }
@@ -871,7 +813,8 @@ module.exports.getTour = async (req, res) => {
       departure: departure,
       transportation: transportation,
       images: images,
-      tourDetails: tourDetails
+      tourDetails: tourDetails,
+      category: category
     })
 
   } catch (error) {
@@ -1061,18 +1004,12 @@ module.exports.removeTour = async (req, res) => {
 
 // [GET] /tour/get-all-tour
 module.exports.getAllTour = async (req, res) => {
-  const filters = req.query;
   try {
-    const query = buildTourQuery(filters, filters.sortOder);
+    const filters = req.query;
+    const query = buildTourQuery(filters);
     const tours = await sequelize.query(query, {
       type: QueryTypes.SELECT
     });
-
-    if (tours.length === 0) {
-      return res.status(400).json({
-        message: "Không lấy được tour nào!"
-      });
-    }
 
     res.status(200).json(tours);
   } catch (error) {
@@ -1081,7 +1018,6 @@ module.exports.getAllTour = async (req, res) => {
       error: "Lỗi lấy dữ liệu"
     });
   }
-
 };
 
 /**
@@ -1209,12 +1145,6 @@ module.exports.getExpiredTours = async (req, res) => {
     const tours = await sequelize.query(expiredToursQuery, {
       type: QueryTypes.SELECT
     });
-
-    if (tours.length === 0) {
-      return res.status(400).json({
-        message: "Không lấy được tour nào!"
-      });
-    }
 
     res.status(200).json(tours);
   } catch (error) {
@@ -1358,11 +1288,6 @@ module.exports.getExpiredSoonTours = async (req, res) => {
       type: QueryTypes.SELECT
     });
 
-    if (tours.length === 0) {
-      return res.status(400).json({
-        message: "Không lấy được tour nào!"
-      });
-    }
 
     res.status(200).json(tours);
   } catch (error) {
@@ -1508,13 +1433,14 @@ module.exports.updateTourFeatured = async (req, res) => {
   const {
     isFeatured
   } = req.body;
+
   const tourId = req.params.tourId;
   if (!tourId) {
     return res.status(400).json("Yêu cầu gửi lên tourId");
   }
   try {
     const updated = await Tour.update({
-      isFeatured: isFeatured === 'true'
+      isFeatured: isFeatured
     }, {
       where: {
         id: tourId

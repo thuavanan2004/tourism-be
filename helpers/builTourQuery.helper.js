@@ -1,22 +1,43 @@
+const unidecode = require("unidecode")
+
 module.exports.buildTourQuery = (filters) => {
   let sortQuery = '';
   if (filters.sortOrder) {
     sortQuery = `ORDER BY tour_detail.adultPrice ${filters.sortOrder === 'desc' ? 'DESC' : 'ASC'}`;
   }
 
-  let statusQuery = '';
+  let statusQuery = 'AND tours.status = 1';
   if (filters.status) {
-    statusQuery = `AND tours.status=${filters.status === '1'}`;
+    statusQuery = `AND tours.status=${filters.status == '1'}`;
   }
 
   let isFeaturedQuery = '';
   if (filters.isFeatured) {
     isFeaturedQuery = `AND tours.isFeatured=${filters.isFeatured}`;
   }
+  let searchQuery = ''
+  if (filters.title) {
+    const titleUnidecode = unidecode(filters.title);
+    const titleSlug = titleUnidecode.replace(/\s+/g, "-");
+    const titleRegex = `%${titleSlug}%`;
+    searchQuery = `AND tours.slug LIKE '${titleRegex}'`;;
+  }
 
   let destinationQuery = '';
   if (filters.destinationTo) {
-    destinationQuery = `AND tours.destinationId=${filters.destinationTo}`;
+    // If destination is a parent or child, get all descendant destinations
+    destinationQuery = `
+      AND tours.destinationId IN (
+        WITH RECURSIVE DestinationTree AS (
+          SELECT id FROM destination WHERE id = ${filters.destinationTo}
+          UNION
+          SELECT d.id
+          FROM destination d
+          INNER JOIN DestinationTree dt ON dt.id = d.parentId
+        )
+        SELECT id FROM DestinationTree
+      )
+    `;
   }
 
   let departureQuery = '';
@@ -66,7 +87,6 @@ module.exports.buildTourQuery = (filters) => {
     LEFT JOIN images ON images.tourId = tours.id
     WHERE
       tours.deleted = 0
-      AND tours.status = 1
       AND DATEDIFF(tour_detail.dayStart, NOW()) >= 0
       AND tour_detail.dayStart = (
         SELECT MIN(t2.dayStart)
@@ -81,6 +101,7 @@ module.exports.buildTourQuery = (filters) => {
       ${transportationQuery}
       ${destinationQuery}
       ${dayQuery}
+      ${searchQuery}
     GROUP BY tours.id, destination.id, departure.id, transportation.id, categories.id, tour_detail.id
     ${sortQuery}
   `;
