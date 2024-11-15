@@ -65,7 +65,7 @@ module.exports.buildTourQuery = (filters) => {
     LEFT JOIN departure ON departure.id = tours.departureId
     LEFT JOIN images ON images.tourId = tours.id
     WHERE
-      AND tours.deleted = 0
+      tours.deleted = 0
       AND tours.status = 1
       AND DATEDIFF(tour_detail.dayStart, NOW()) >= 0
       AND tour_detail.dayStart = (
