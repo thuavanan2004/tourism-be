@@ -148,14 +148,16 @@ module.exports.getAll = async (req, res) => {
 module.exports.detail = async (req, res) => {
 
   try {
+
     const adminId = req.params.adminId;
+
     const admin = await Admin.findByPk(adminId);
     if (!admin) {
       return res.status(400).json("Admin không tồn tại!");
     }
     const role = await Role.findOne({
       where: {
-        id: admin.id
+        id: admin.roleId
       }
     });
 
