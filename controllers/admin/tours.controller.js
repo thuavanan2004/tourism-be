@@ -335,6 +335,8 @@ module.exports.create = async (req, res) => {
     images,
     tour_detail
   } = req.body;
+  // console.log(req.body);
+
 
   if (!title) {
     return res.status(400).json("Title là bắt buộc!");
@@ -441,16 +443,9 @@ module.exports.create = async (req, res) => {
 
 
     if (images && Array.isArray(images) && images.length > 0) {
-      if (!infoImage || JSON.parse(infoImage).length !== images.length) {
-        throw new Error("infoImage không được xác định đúng hoặc không khớp với độ dài của hình ảnh.");
-      }
-
-      const infoImageParse = JSON.parse(infoImage);
       const dataImages = images.map((file, index) => ({
         tourId: tour.id,
         source: file,
-        name: infoImageParse[index].name || "",
-        isMain: infoImageParse[index].isMain === 'true'
       }));
 
       var imageRecords = await Image.bulkCreate(dataImages, {
@@ -561,7 +556,6 @@ module.exports.edit = async (req, res) => {
     transportationId,
     destinationId,
     categoryId,
-    infoImage,
     images,
     tour_detail
   } = req.body;

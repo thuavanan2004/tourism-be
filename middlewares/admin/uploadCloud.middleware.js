@@ -1,4 +1,7 @@
 const uploadToCloudinaryHelper = require("../../helpers/uploadCloud.helper");
+const multer = require('multer');
+
+const upload = multer();
 
 module.exports.uploadSingle = async (req, res, next) => {
   if (req["file"]) {
@@ -12,6 +15,7 @@ module.exports.uploadSingle = async (req, res, next) => {
 
 module.exports.uploadFields = async (req, res, next) => {
   let urls = [];
+
   if (!req.files || req.files.length === 0) {
     // Không có ảnh nào được gửi, đi tiếp tới controller
     return next();

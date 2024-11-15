@@ -17,15 +17,9 @@ const Image = sequelize.define('Image', {
     },
     allowNull: false
   },
-  name: {
-    type: DataTypes.STRING(255),
-  },
   source: {
     type: DataTypes.STRING(255),
     allowNull: false,
-  },
-  isMain: {
-    type: DataTypes.BOOLEAN
   },
   createdAt: {
     type: DataTypes.DATE,

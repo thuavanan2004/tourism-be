@@ -1,4 +1,4 @@
-const sequlize = require("../../config/database");
+const sequelize = require("../../config/database");
 const Destination = require("../../models/destination.model");
 const slugify = require("slugify");
 const createTreeHelper = require("../../helpers/createTree.helper");
@@ -119,7 +119,7 @@ module.exports.create = async (req, res) => {
       slug: slug,
       image: image,
       parentId: parentId || null,
-      createdBy: adminId
+      createdBy: adminId,
     });
 
     if (!destination) {

@@ -171,6 +171,8 @@ module.exports.create = async (req, res) => {
     })
   }
   try {
+    console.log(avatar);
+
     const adminExist = await Admin.findOne({
       where: {
         email: email
