@@ -45,9 +45,12 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(bodyParser.json());
+app.use(bodyParser.json({
+  limit: "50mb"
+})); // tăng giới hạn lên 50MB
 app.use(bodyParser.urlencoded({
-  extended: false
+  limit: "50mb",
+  extended: true
 }));
 app.use(cookieParser());
 
