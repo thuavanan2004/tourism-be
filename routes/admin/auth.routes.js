@@ -10,6 +10,6 @@ router.post("/login", controllers.login);
 
 router.get("/logout", controllers.logout);
 
-router.post("/verify-token", requireAuth, controllers.verifyToken);
+router.post("/verify-token", controllers.verifyToken);
 
 module.exports = router;

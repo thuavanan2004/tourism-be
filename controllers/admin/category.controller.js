@@ -501,7 +501,7 @@ module.exports.changeStatus = async (req, res) => {
   if (!categoryId) {
     return res.status(400).json("Yêu cầu gửi lên categoryId")
   }
-  if (!status) {
+  if (status == undefined) {
     return res.status(400).json("Yêu cầu gửi lên status")
   }
   try {
@@ -512,7 +512,7 @@ module.exports.changeStatus = async (req, res) => {
     const adminId = res.locals.adminId;
 
     await category.update({
-      status: status == "true",
+      status: status,
       updatedBy: adminId
     });
     res.status(200).json({

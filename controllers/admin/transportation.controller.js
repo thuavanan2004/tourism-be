@@ -176,7 +176,6 @@ module.exports.update = async (req, res) => {
     transportationId,
     title,
     information,
-    status
   } = req.body;
   if (!transportationId) {
     return res.status(400).json("Vui lòng gửi lên transportationId");
@@ -191,7 +190,6 @@ module.exports.update = async (req, res) => {
     await transportation.update({
       title: title || transportation.title,
       information: information || transportation.information,
-      status: status === 'true',
       updatedBy: adminId
     })
 
@@ -458,7 +456,7 @@ module.exports.changeStatus = async (req, res) => {
   if (!transportationId) {
     return res.status(400).json("Yêu cầu gửi lên transportationId")
   }
-  if (!status) {
+  if (status == undefined) {
     return res.status(400).json("Yêu cầu gửi lên status")
   }
   try {
@@ -469,7 +467,7 @@ module.exports.changeStatus = async (req, res) => {
     const adminId = res.locals.adminId;
 
     await transportation.update({
-      status: status == "true",
+      status: status,
       updatedBy: adminId
     });
     res.status(200).json({

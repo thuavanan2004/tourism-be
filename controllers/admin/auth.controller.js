@@ -1,6 +1,9 @@
 const Admin = require("../../models/admin.model");
 const bcrypt = require("bcrypt");
 const jwtHelpers = require("../../helpers/jwt.helper");
+const {
+  where
+} = require("sequelize");
 
 /**
  * @swagger
@@ -202,16 +205,26 @@ module.exports.logout = async (req, res) => {
 // [POST] /auth/verify-token
 module.exports.verifyToken = async (req, res) => {
   try {
-    const adminId = res.locals.adminId;
+    const {
+      token
+    } = req.body;
 
-    const admin = await Admin.findByPk(adminId);
+    const admin = await Admin.findOne({
+      where: {
+        token: token
+      }
+    });
     if (!admin) {
       return res.status(400).json({
         message: "Admin không tồn tại"
       })
     };
 
-    res.status(200).json(adminId);
+    res.status(200).json({
+      id: admin.id,
+      fullName: admin.fullName,
+      avatar: admin.avatar
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json("Lỗi xác thực");

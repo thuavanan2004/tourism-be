@@ -256,10 +256,10 @@ module.exports.update = async (req, res) => {
       return res.status(400).json("Destination không tồn tại!")
     }
 
-    const parentDestination = await Destination.findByPk(parentId);
-    if (!parentDestination) {
-      return res.status(400).json("Danh mục cha của Destination không tồn tại!")
-    }
+    // const parentDestination = await Destination.findByPk(parentId);
+    // if (!parentDestination) {
+    //   return res.status(400).json("Danh mục cha của Destination không tồn tại!")
+    // }
 
     const adminId = res.locals.adminId;
     await destination.update({
@@ -607,7 +607,7 @@ module.exports.changeStatus = async (req, res) => {
   if (!destinationId) {
     return res.status(400).json("Yêu cầu gửi lên destinationId")
   }
-  if (!status) {
+  if (status == undefined) {
     return res.status(400).json("Yêu cầu gửi lên status")
   }
   try {
@@ -618,7 +618,7 @@ module.exports.changeStatus = async (req, res) => {
     const adminId = res.locals.adminId;
 
     await destination.update({
-      status: status == "true",
+      status: status,
       updatedBy: adminId
     });
     res.status(200).json({
@@ -890,7 +890,6 @@ module.exports.getTree = async (req, res) => {
     const data = await Destination.findAll({
       where: {
         deleted: false,
-        status: true
       }
     })
     if (data.length == 0) {
@@ -904,6 +903,8 @@ module.exports.getTree = async (req, res) => {
         id: node.dataValues.id,
         title: node.dataValues.title,
         image: node.dataValues.image,
+        information: node.dataValues.information,
+        status: node.dataValues.status,
         parentId: node.dataValues.parentId,
         children: node.children ? node.children.map(formatChildren) : []
       };

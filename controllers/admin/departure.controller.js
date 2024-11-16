@@ -164,7 +164,6 @@ module.exports.update = async (req, res) => {
     departureId,
     title,
     information,
-    status
   } = req.body;
   if (!departureId) {
     return res.status(400).json("Vui lòng gửi lên departureId");
@@ -179,7 +178,6 @@ module.exports.update = async (req, res) => {
     await departure.update({
       title: title || departure.title,
       information: information || departure.information,
-      status: status === 'true',
       updatedBy: adminId
     })
 
@@ -432,7 +430,7 @@ module.exports.changeStatus = async (req, res) => {
   if (!departureId) {
     return res.status(400).json("Yêu cầu gửi lên departureId")
   }
-  if (!status) {
+  if (status == undefined) {
     return res.status(400).json("Yêu cầu gửi lên status")
   }
   try {
@@ -443,7 +441,7 @@ module.exports.changeStatus = async (req, res) => {
     const adminId = res.locals.adminId;
 
     await departure.update({
-      status: status == "true",
+      status: status,
       updatedBy: adminId
     });
     res.status(200).json({
