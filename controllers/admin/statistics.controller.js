@@ -811,9 +811,9 @@ module.exports.orders = async (req, res) => {
     SELECT
       YEAR(createdAt) AS year,
       MONTH(createdAt) AS month,
-      COUNT(CASE WHEN status = 'canceled' THEN 1 END) AS canceledCount,
+      COUNT(CASE WHEN status = 'cancelled' THEN 1 END) AS canceledCount,
       COUNT(id) AS totalOrders,
-      (COUNT(CASE WHEN status = 'canceled' THEN 1 END) / COUNT(id)) * 100 AS cancelRate
+      (COUNT(CASE WHEN status = 'cancelled' THEN 1 END) / COUNT(id)) * 100 AS cancelRate
     FROM orders
     GROUP BY YEAR(createdAt), MONTH(createdAt)
     ORDER BY year DESC, month DESC;
